@@ -20,6 +20,7 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.PluginRegistry
 import io.flutter.plugin.platform.PlatformView
+import java.util.EnumSet;
 
 class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
         PlatformView, MethodChannel.MethodCallHandler {
