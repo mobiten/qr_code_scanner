@@ -10,17 +10,19 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import com.google.zxing.ResultPoint
+import com.google.zxing.BarcodeFormat;
 import android.hardware.Camera.CameraInfo
 import com.journeyapps.barcodescanner.BarcodeCallback
 import com.journeyapps.barcodescanner.BarcodeResult
 import com.journeyapps.barcodescanner.BarcodeView
+import com.journeyapps.barcodescanner.DefaultDecoderFactory;
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.PluginRegistry
 import io.flutter.plugin.platform.PlatformView
 
 class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
-        PlatformView,MethodChannel.MethodCallHandler {
+        PlatformView, MethodChannel.MethodCallHandler {
 
     companion object {
         const val CAMERA_REQUEST_ID = 513469796
@@ -72,7 +74,7 @@ class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
         barcodeView?.pause()
         var settings = barcodeView?.cameraSettings
 
-        if(settings?.requestedCameraId == CameraInfo.CAMERA_FACING_FRONT)
+        if (settings?.requestedCameraId == CameraInfo.CAMERA_FACING_FRONT)
             settings?.requestedCameraId = CameraInfo.CAMERA_FACING_BACK
         else
             settings?.requestedCameraId = CameraInfo.CAMERA_FACING_FRONT
@@ -121,6 +123,12 @@ class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
 
     private fun createBarCodeView(): BarcodeView? {
         val barcode = BarcodeView(registrar.activity())
+        barcode.setDecoderFactory(DefaultDecoderFactory(
+                EnumSet.of(BarcodeFormat.UPC_A,
+                        BarcodeFormat.UPC_E,
+                        BarcodeFormat.EAN_13,
+                        BarcodeFormat.EAN_8,
+                        BarcodeFormat.CODE_128)))
         barcode.decodeContinuous(
                 object : BarcodeCallback {
                     override fun barcodeResult(result: BarcodeResult) {
@@ -155,7 +163,7 @@ class QRView(private val registrar: PluginRegistry.Registrar, id: Int) :
 
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
-        when(call?.method){
+        when (call?.method) {
             "checkAndRequestPermission" -> {
                 checkAndRequestPermission(result)
             }
